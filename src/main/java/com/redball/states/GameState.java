@@ -18,14 +18,42 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.redball.entities.Enemy;
 import com.redball.entities.Player;
-import com.redball.level.Level1Builder;
 import com.redball.level.TiledLevelBuilder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * GameState — bucle principal del juego.
+ *
+ * Cambios respecto a la versión anterior:
+ *  - Recibe un índice de nivel (1 = musgo, 2 = cueva) en lugar de una ruta fija.
+ *  - Al ganar activa WinMenuState (si hay más niveles) o la pantalla final.
+ *  - Al perder todas las vidas activa GameOverOverlay.
+ *  - Se elimina la lógica de "Retry" con teclado: todo pasa por los menús GUI.
+ */
 public class GameState extends AbstractAppState implements PhysicsCollisionListener, ActionListener {
+
+    // =========================================================================
+    // MAPA DE NIVELES — añade aquí rutas para nuevos niveles
+    // =========================================================================
+
+    /** Rutas de los archivos .tmj, indexadas a partir de 1. */
+    private static final String[] LEVEL_PATHS = {
+        null,                              // [0] no usado
+        "Levels/nivel2_musgo.tmj",         // [1] nivel musgo
+        "Levels/nivel3_cueva.tmj",         // [2] nivel cueva
+    };
+
+    /** Número total de niveles disponibles. */
+    public static final int TOTAL_LEVELS = LEVEL_PATHS.length - 1;
+
+    // =========================================================================
+    // CAMPOS
+    // =========================================================================
+
+    private final int levelIndex; // nivel que estamos ejecutando ahora
 
     private SimpleApplication app;
     private AssetManager      assetManager;
@@ -33,45 +61,49 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
     private Camera            cam;
     private InputManager      inputManager;
     private BulletAppState    bulletAppState;
-    // Variables para el audio
+
+    // Audio
     private com.jme3.audio.AudioNode bgm;
     private com.jme3.audio.AudioNode checkpointSfx;
     private com.jme3.audio.AudioNode winSfx;
-    // --- NUEVOS NODOS ---
     private com.jme3.audio.AudioNode squashSfx;
     private com.jme3.audio.AudioNode hitSfx;
     private com.jme3.audio.AudioNode deathSfx;
-    
 
     private Node levelNode;
 
     private Player       player;
     private List<Enemy>  enemies = new ArrayList<>();
 
-    // --- Input flags ---
+    // Input flags
     private boolean moveLeft  = false;
     private boolean moveRight = false;
 
-    // --- Cámara follow ---
+    // Cámara follow
     private static final float CAM_SMOOTHING = 5f;
     private static final float CAM_OFFSET_Y  = 1.5f;
 
-    // --- Fondo (vive en rootNode para seguir la cámara automáticamente) ---
-    // Se actualiza en updateBackground() para centrarse en la cámara.
+    // Fondo dinámico
     private com.jme3.scene.Geometry backgroundGeom;
+    private String backgroundTexPath; // depende del nivel
 
-    // --- Respawn ---
+    // Respawn
     private static final float RESPAWN_DELAY = 1.2f;
-    private float   respawnTimer    = 0f;
-    private boolean playerDead      = false;
-    private boolean ignoreKillZone  = false; // 1-frame grace tras respawn (BUG 3)
-    private Vector3f spawnPoint = new Vector3f(-8f, 1f, 0f);
+    private float    respawnTimer   = 0f;
+    private boolean  playerDead     = false;
+    private boolean  ignoreKillZone = false;
+    private Vector3f spawnPoint     = new Vector3f(-8f, 1f, 0f);
 
-    // --- Game Over ---
-    private boolean gameOver = false;
+    // Control de estado
+    private boolean levelFinished = false; // true cuando se toca la meta
 
-    public GameState(BulletAppState bulletAppState) {
+    // =========================================================================
+    // CONSTRUCTOR
+    // =========================================================================
+
+    public GameState(BulletAppState bulletAppState, int levelIndex) {
         this.bulletAppState = bulletAppState;
+        this.levelIndex     = levelIndex;
     }
 
     // =========================================================================
@@ -88,92 +120,70 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
         this.cam          = app.getCamera();
         this.inputManager = app.getInputManager();
 
-    
-        // En initialize(), después de adjuntar levelNode, agrega esta línea:
         levelNode = new Node("LevelNode");
         rootNode.attachChild(levelNode);
 
         bulletAppState.getPhysicsSpace().addCollisionListener(this);
         enemies.clear();
 
-        TiledLevelBuilder builder = new TiledLevelBuilder(assetManager, bulletAppState.getPhysicsSpace(), levelNode);
-        this.spawnPoint = builder.build("Levels/nivel2_musgo.tmj", enemies);
+        // Seleccionar fondo según nivel
+        backgroundTexPath = (levelIndex == 2)
+                ? "Textures/Background2.png"
+                : "Textures/background.png";
 
-        buildBackground(); // ← ESTA LÍNEA FALTA — sin ella nunca hay fondo
+        // Construir el nivel mediante TiledLevelBuilder
+        String levelPath = resolveLevelPath(levelIndex);
+        TiledLevelBuilder builder = new TiledLevelBuilder(assetManager,
+                bulletAppState.getPhysicsSpace(), levelNode);
+        this.spawnPoint = builder.build(levelPath, enemies);
 
-        // 2. Creamos al jugador
+        buildBackground();
+
+        // Crear al jugador
         player = new Player(assetManager, bulletAppState.getPhysicsSpace());
         player.respawn(spawnPoint.clone());
         levelNode.attachChild(player);
-        
+
         registerInput();
-        // --- INICIALIZAR AUDIO ---
-        // Debes meter estos archivos en la ruta: src/main/resources/Sounds/
-        // --- INICIALIZAR AUDIO ---
-        try {
-            bgm = new com.jme3.audio.AudioNode(assetManager, "Sounds/bgm.ogg", com.jme3.audio.AudioData.DataType.Stream);
-            bgm.setPositional(false); 
-            bgm.setLooping(true); 
-            bgm.setVolume(0.5f);
-            rootNode.attachChild(bgm);
-            bgm.play();
-
-            checkpointSfx = new com.jme3.audio.AudioNode(assetManager, "Sounds/checkpoint.ogg", com.jme3.audio.AudioData.DataType.Buffer);
-            checkpointSfx.setPositional(false);
-
-            winSfx = new com.jme3.audio.AudioNode(assetManager, "Sounds/win.ogg", com.jme3.audio.AudioData.DataType.Buffer);
-            winSfx.setPositional(false);
-            
-            // --- CARGAMOS LOS NUEVOS SFX ---
-            squashSfx = new com.jme3.audio.AudioNode(assetManager, "Sounds/squash.ogg", com.jme3.audio.AudioData.DataType.Buffer);
-            squashSfx.setPositional(false);
-
-            hitSfx = new com.jme3.audio.AudioNode(assetManager, "Sounds/hit.ogg", com.jme3.audio.AudioData.DataType.Buffer);
-            hitSfx.setPositional(false);
-
-            deathSfx = new com.jme3.audio.AudioNode(assetManager, "Sounds/death.ogg", com.jme3.audio.AudioData.DataType.Buffer);
-            deathSfx.setPositional(false);
-
-        } catch (Exception e) {
-            System.err.println("¡Error cargando el audio!");
-            e.printStackTrace();
-        }
+        initAudio();
     }
 
     // =========================================================================
-    // FONDO (BUG 5)
+    // RESOLUCIÓN DE NIVEL
+    // =========================================================================
+
+    private String resolveLevelPath(int index) {
+        if (index >= 1 && index < LEVEL_PATHS.length) {
+            return LEVEL_PATHS[index];
+        }
+        // Fuera de rango → volver al nivel 1
+        return LEVEL_PATHS[1];
+    }
+
+    // =========================================================================
+    // FONDO
     // =========================================================================
 
     private void buildBackground() {
-        // Ancho generoso: cubre el frustum completo sin importar aspect ratio
         float bgW = 100f, bgH = 40f;
-        com.jme3.scene.shape.Quad q = Player.buildCenteredQuad(bgW, bgH) instanceof com.jme3.scene.shape.Quad
-                ? (com.jme3.scene.shape.Quad) Player.buildCenteredQuad(bgW, bgH)
-                : null;
-
-        // buildCenteredQuad retorna Quad, cast seguro
-        com.jme3.scene.shape.Quad quad = (com.jme3.scene.shape.Quad) Player.buildCenteredQuad(bgW, bgH);
+        com.jme3.scene.shape.Quad quad =
+                (com.jme3.scene.shape.Quad) Player.buildCenteredQuad(bgW, bgH);
         backgroundGeom = new com.jme3.scene.Geometry("Background", quad);
 
         com.jme3.material.Material mat = new com.jme3.material.Material(
                 assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         try {
-            com.jme3.texture.Texture tex = assetManager.loadTexture("Textures/background.png");
+            com.jme3.texture.Texture tex = assetManager.loadTexture(backgroundTexPath);
             tex.setWrap(com.jme3.texture.Texture.WrapMode.Repeat);
             mat.setTexture("ColorMap", tex);
         } catch (Exception e) {
-            mat.setColor("Color", new com.jme3.math.ColorRGBA(0.15f, 0.12f, 0.10f, 1f)); // apocalíptico marrón oscuro
+            mat.setColor("Color", new com.jme3.math.ColorRGBA(0.05f, 0.03f, 0.10f, 1f));
         }
         backgroundGeom.setMaterial(mat);
-        // Z profundo negativo: queda detrás de todo en espacio mundial
         backgroundGeom.setLocalTranslation(0f, 0f, -9f);
         rootNode.attachChild(backgroundGeom);
     }
 
-    /**
-     * Centra el fondo en la posición actual de la cámara (X, Y).
-     * Al estar en rootNode (no en levelNode), solo necesitamos igualar la posición de la cámara.
-     */
     private void updateBackground() {
         if (backgroundGeom == null) return;
         Vector3f camPos = cam.getLocation();
@@ -181,17 +191,39 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
     }
 
     // =========================================================================
-    // ENEMIGOS
+    // AUDIO
     // =========================================================================
 
-    private void spawnEnemies() {
+    private void initAudio() {
+        try {
+            bgm = new com.jme3.audio.AudioNode(assetManager, "Sounds/bgm.ogg",
+                    com.jme3.audio.AudioData.DataType.Stream);
+            bgm.setPositional(false);
+            bgm.setLooping(true);
+            bgm.setVolume(0.5f);
+            rootNode.attachChild(bgm);
+            bgm.play();
+
+            checkpointSfx = loadSfx("Sounds/checkpoint.ogg");
+            winSfx        = loadSfx("Sounds/win.ogg");
+            squashSfx     = loadSfx("Sounds/squash.ogg");
+            hitSfx        = loadSfx("Sounds/hit.ogg");
+            deathSfx      = loadSfx("Sounds/death.ogg");
+        } catch (Exception e) {
+            System.err.println("[GameState] Error cargando audio: " + e.getMessage());
+        }
     }
 
-    private void addEnemy(float startX, float startY, float patrolMinX, float patrolMaxX) {
-        Enemy e = new Enemy(assetManager, bulletAppState.getPhysicsSpace(), patrolMinX, patrolMaxX);
-        e.setLocalTranslation(startX, startY, 0f);
-        levelNode.attachChild(e);
-        enemies.add(e);
+    private com.jme3.audio.AudioNode loadSfx(String path) {
+        try {
+            com.jme3.audio.AudioNode sfx = new com.jme3.audio.AudioNode(assetManager, path,
+                    com.jme3.audio.AudioData.DataType.Buffer);
+            sfx.setPositional(false);
+            return sfx;
+        } catch (Exception e) {
+            System.err.println("[GameState] SFX no encontrado: " + path);
+            return null;
+        }
     }
 
     // =========================================================================
@@ -201,10 +233,10 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
     private void registerInput() {
         inputManager.addMapping("MoveLeft",  new KeyTrigger(KeyInput.KEY_LEFT),  new KeyTrigger(KeyInput.KEY_A));
         inputManager.addMapping("MoveRight", new KeyTrigger(KeyInput.KEY_RIGHT), new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("Jump",      new KeyTrigger(KeyInput.KEY_SPACE), new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
-        // BUG 4: Retry para game-over
-        inputManager.addMapping("Retry",     new KeyTrigger(KeyInput.KEY_R),     new KeyTrigger(KeyInput.KEY_RETURN));
-        inputManager.addListener(this, "MoveLeft", "MoveRight", "Jump", "Retry");
+        inputManager.addMapping("Jump",      new KeyTrigger(KeyInput.KEY_SPACE),
+                                             new KeyTrigger(KeyInput.KEY_UP),
+                                             new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addListener(this, "MoveLeft", "MoveRight", "Jump");
     }
 
     @Override
@@ -213,37 +245,31 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
             case "MoveLeft":  moveLeft  = isPressed; break;
             case "MoveRight": moveRight = isPressed; break;
             case "Jump":
-                if (isPressed && !playerDead && !gameOver) player.tryJump();
-                break;
-            case "Retry":
-                // BUG 4: solo actuar en game-over y al soltar la tecla (evitar doble disparo)
-                if (isPressed && gameOver) restartLevel();
+                if (isPressed && !playerDead && !levelFinished) player.tryJump();
                 break;
         }
     }
 
     // =========================================================================
-    // UPDATE PRINCIPAL
+    // UPDATE
     // =========================================================================
 
     @Override
     public void update(float tpf) {
-        if (!isEnabled() || gameOver) return;
+        if (!isEnabled() || levelFinished) return;
 
-        // --- Respawn timer ---
         if (playerDead) {
             respawnTimer -= tpf;
             if (respawnTimer <= 0f) respawnPlayer();
-            updateCamera(tpf);      // la cámara sigue moviéndose aunque el jugador muera
+            updateCamera(tpf);
             updateBackground();
             return;
         }
 
-        // --- Input ---
         if (moveLeft)  player.rollLeft(tpf);
         if (moveRight) player.rollRight(tpf);
 
-        // --- Enemigos ---
+        // Enemigos
         Iterator<Enemy> it = enemies.iterator();
         while (it.hasNext()) {
             Enemy e = it.next();
@@ -255,40 +281,33 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
             }
         }
 
-        // --- Cámara ---
         updateCamera(tpf);
         updateBackground();
 
-        // --- Animación de explosión post-muerte ---
         if (player.isExploding()) {
             player.updateExplosion(tpf);
         }
 
-        // --- Kill zone (BUG 3): usar posición física, no Node.getWorldTranslation() ---
+        // Kill zone
         if (!ignoreKillZone) {
             Vector3f physPos = player.getPhysicsPosition();
             if (physPos != null && physPos.y < -20f) {
                 triggerPlayerDeath();
             }
         }
-        ignoreKillZone = false; // resetear flag después de 1 frame
+        ignoreKillZone = false;
     }
 
     // =========================================================================
-    // CÁMARA FOLLOW
+    // CÁMARA
     // =========================================================================
 
     private void updateCamera(float tpf) {
         Vector3f playerPos = playerDead ? cam.getLocation() : player.getPhysicsPosition();
         if (playerPos == null) return;
 
-        float targetX = playerPos.x + 0f;
+        float targetX = Math.max(playerPos.x, 0f);
         float targetY = playerPos.y + CAM_OFFSET_Y;
-
-        // Evita que la cámara vea la nada a la izquierda (inicio del nivel)
-        targetX = Math.max(targetX, 0f); 
-        
-        // BORRAMOS el Math.min(targetX, 25f) que tenías aquí. ¡Libertad total!
 
         Vector3f current = cam.getLocation();
         float smoothX = com.jme3.math.FastMath.interpolateLinear(CAM_SMOOTHING * tpf, current.x, targetX);
@@ -298,7 +317,7 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
     }
 
     // =========================================================================
-    // COLISIONES (BUG 1) — API Minie correcta
+    // COLISIONES
     // =========================================================================
 
     @Override
@@ -310,53 +329,43 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
         Object dataB = (pcoB != null) ? pcoB.getApplicationData() : null;
 
         boolean playerInvolved = (dataA instanceof Player) || (dataB instanceof Player);
-        
         if (!playerInvolved || playerDead) return;
 
-        // --- SENSORES (Checkpoint y Meta) ---
+        // --- Sensores (Checkpoint / Meta) ---
         Node sensorNode = null;
-        if (dataA instanceof Node && ("Checkpoint".equals(((Node)dataA).getName()) || "Meta".equals(((Node)dataA).getName()))) {
-            sensorNode = (Node) dataA;
-        } else if (dataB instanceof Node && ("Checkpoint".equals(((Node)dataB).getName()) || "Meta".equals(((Node)dataB).getName()))) {
-            sensorNode = (Node) dataB;
+        if (dataA instanceof Node) {
+            String n = ((Node)dataA).getName();
+            if ("Checkpoint".equals(n) || "Meta".equals(n)) sensorNode = (Node) dataA;
+        }
+        if (sensorNode == null && dataB instanceof Node) {
+            String n = ((Node)dataB).getName();
+            if ("Checkpoint".equals(n) || "Meta".equals(n)) sensorNode = (Node) dataB;
         }
 
         if (sensorNode != null) {
             if ("Checkpoint".equals(sensorNode.getName())) {
-                // FIX 4: Regresar a la capa Z = 0
                 Vector3f pos = sensorNode.getLocalTranslation().clone();
-                pos.z = 0f; 
+                pos.z = 0f;
                 this.spawnPoint.set(pos);
-                
-                // FIX 2: Cambiar sprite del checkpoint
+
                 com.jme3.scene.Geometry geom = (com.jme3.scene.Geometry) sensorNode.getChild(0);
                 try {
-                    com.jme3.texture.Texture tex = app.getAssetManager().loadTexture("Textures/checkpoint_on.png");
+                    com.jme3.texture.Texture tex =
+                            app.getAssetManager().loadTexture("Textures/checkpoint_on.png");
                     geom.getMaterial().setTexture("ColorMap", tex);
-                } catch (Exception e) {}
+                } catch (Exception ignored) {}
 
-                // FIX 2: Tocar sonido de checkpoint (solo una vez)
                 if (checkpointSfx != null) checkpointSfx.playInstance();
-
-                // Cambiar el nombre para que ya no vuelva a entrar aquí y no repita el sonido
                 sensorNode.setName("Checkpoint_Guardado");
 
             } else if ("Meta".equals(sensorNode.getName())) {
-                System.out.println("¡NIVEL COMPLETADO!");
-                gameOver = true;
-                
-                // --- DETENEMOS LA MÚSICA AL GANAR ---
-                if (bgm != null) bgm.stop();
-                
-                // FIX 2: Tocar sonido de meta
-                if (winSfx != null) winSfx.playInstance();
-                
+                onLevelComplete();
                 sensorNode.setName("Meta_Tocada");
             }
-            return; 
+            return;
         }
 
-        // --- 2. LUEGO REVISAMOS ENEMIGOS ---
+        // --- Enemigos ---
         Enemy enemyHit = findEnemy(dataA, dataB);
         if (enemyHit == null || enemyHit.isDying()) return;
 
@@ -366,20 +375,16 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
 
         float playerBottom = playerPos.y - player.getHalfSize();
         float enemyTop     = enemyPos.y  + enemyHit.getHalfHeight();
-
-        boolean stomped = playerBottom >= (enemyTop - 0.35f);
+        boolean stomped    = playerBottom >= (enemyTop - 0.35f);
 
         if (stomped) {
-            // --- SONIDO DE APLASTAR ---
             if (squashSfx != null) squashSfx.playInstance();
-            
             enemyHit.startDying();
             player.bounce();
-            app.getStateManager().getState(HUDState.class).onEnemyKilled();
+            HUDState hud = app.getStateManager().getState(HUDState.class);
+            if (hud != null) hud.onEnemyKilled();
         } else {
-            // --- SONIDO DE RECIBIR GOLPE ---
             if (hitSfx != null) hitSfx.playInstance();
-            
             triggerPlayerDeath();
         }
     }
@@ -392,6 +397,27 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
     }
 
     // =========================================================================
+    // NIVEL COMPLETADO
+    // =========================================================================
+
+    private void onLevelComplete() {
+        if (levelFinished) return;
+        levelFinished = true;
+
+        System.out.println("[GameState] ¡Nivel " + levelIndex + " completado!");
+
+        if (bgm != null) bgm.stop();
+        if (winSfx != null) winSfx.playInstance();
+
+        HUDState hud = app.getStateManager().getState(HUDState.class);
+        if (hud != null) hud.onLevelComplete();
+
+        // Mostrar menú de victoria (ligeramente retrasado lo manejamos con
+        // un AppState encolado; JME aplica los cambios de estado al final del frame)
+        app.getStateManager().attach(new WinMenuState(bulletAppState, levelIndex));
+    }
+
+    // =========================================================================
     // MUERTE Y RESPAWN
     // =========================================================================
 
@@ -399,50 +425,29 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
         if (playerDead) return;
         playerDead   = true;
         respawnTimer = RESPAWN_DELAY;
-        
-        // --- CORTAR BGM Y REPRODUCIR SONIDO DE MUERTE ---
+
         if (bgm != null) bgm.stop();
         if (deathSfx != null) deathSfx.playInstance();
 
         player.die();
 
         HUDState hud = app.getStateManager().getState(HUDState.class);
-        hud.onPlayerDied();
-
-        // Comprobar si es game over
-        if (hud.getLives() <= 0) {
-            gameOver = true;
+        if (hud != null) {
+            hud.onPlayerDied();
+            // ¿Game Over?
+            if (hud.getLives() <= 0) {
+                levelFinished = true; // detener el bucle de update
+                app.getStateManager().attach(
+                        new GameOverOverlay(bulletAppState, levelIndex));
+            }
         }
     }
 
     private void respawnPlayer() {
         playerDead     = false;
-        ignoreKillZone = true;  // BUG 3: saltear kill-zone check este frame
+        ignoreKillZone = true;
         player.respawn(spawnPoint.clone());
-        
-        // --- REANUDAR MÚSICA SI NO ES GAME OVER ---
-        if (bgm != null && !gameOver) {
-            bgm.play();
-        }
-    }
-
-    // =========================================================================
-    // REINICIO DE NIVEL (BUG 4)
-    // =========================================================================
-
-    private void restartLevel() {
-        // Limpiar todo y hacer re-initialize vía el StateManager de JME.
-        // La forma más limpia: detach + re-attach este mismo estado.
-        AppStateManager sm = app.getStateManager();
-
-        // Reiniciar HUD
-        HUDState hud = sm.getState(HUDState.class);
-        if (hud != null) hud.reset();
-
-        // Limpiar y re-inicializar GameState
-        sm.detach(this);
-        GameState fresh = new GameState(bulletAppState);
-        sm.attach(fresh);
+        if (bgm != null && !levelFinished) bgm.play();
     }
 
     // =========================================================================
@@ -452,26 +457,21 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
     @Override
     public void cleanup() {
         super.cleanup();
-        
-        // Detener la música
+
         if (bgm != null) bgm.stop();
 
         if (bulletAppState.getPhysicsSpace() != null) {
             bulletAppState.getPhysicsSpace().removeCollisionListener(this);
-            
-            // --- FIX 1: Recorrer todo el nivel y borrar las físicas viejas ---
-            levelNode.depthFirstTraversal(new com.jme3.scene.SceneGraphVisitor() { // <- ¡Aquí quitamos la palabra Adapter!
+            levelNode.depthFirstTraversal(new com.jme3.scene.SceneGraphVisitor() {
                 @Override
                 public void visit(com.jme3.scene.Spatial spatial) {
-                    com.jme3.bullet.control.PhysicsControl control = spatial.getControl(com.jme3.bullet.control.PhysicsControl.class);
-                    if (control != null) {
-                        bulletAppState.getPhysicsSpace().remove(control);
-                    }
+                    com.jme3.bullet.control.PhysicsControl ctrl =
+                            spatial.getControl(com.jme3.bullet.control.PhysicsControl.class);
+                    if (ctrl != null) bulletAppState.getPhysicsSpace().remove(ctrl);
                 }
             });
         }
 
-        // Remover fondo del rootNode
         if (backgroundGeom != null) {
             rootNode.detachChild(backgroundGeom);
             backgroundGeom = null;
@@ -480,7 +480,6 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
         safeDeleteMapping("MoveLeft");
         safeDeleteMapping("MoveRight");
         safeDeleteMapping("Jump");
-        safeDeleteMapping("Retry");
         inputManager.removeListener(this);
 
         rootNode.detachChild(levelNode);
@@ -489,4 +488,9 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
     private void safeDeleteMapping(String name) {
         try { inputManager.deleteMapping(name); } catch (Exception ignored) {}
     }
+
+    // =========================================================================
+    // GETTER PÚBLICO (para WinMenuState / GameOverOverlay si lo necesitan)
+    // =========================================================================
+    public int getLevelIndex() { return levelIndex; }
 }

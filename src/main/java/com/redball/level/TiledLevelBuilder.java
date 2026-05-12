@@ -22,15 +22,9 @@ import java.util.*;
 
 public class TiledLevelBuilder {
 
-    private static final float PIXELS_PER_UNIT = 256f;
-
-    // -------------------------------------------------------------------------
-    // Si tu tileset usa sprites más grandes que 1 tile (ej. 512×512px),
-    // Tiled los posiciona en la cuadrícula pero cada uno ocupa SPRITE_SIZE px.
-    // Este valor se lee del .tsx automáticamente (ver readTilesetSpriteSize).
-    // Si no se puede leer el .tsx, se usa este fallback.
-    // -------------------------------------------------------------------------
-    private static final float FALLBACK_SPRITE_SIZE_PX = 512f;
+    // Quítales el "static final"
+    private float PIXELS_PER_UNIT = 256f;
+    private float FALLBACK_SPRITE_SIZE_PX = 512f;
 
     // Dos tiles en columnas distintas se consideran la MISMA plataforma
     // si están a menos de MERGE_GAP_TILES tiles de distancia horizontal/vertical.
@@ -51,6 +45,18 @@ public class TiledLevelBuilder {
     // =========================================================================
 
     public Vector3f build(String assetPath, List<Enemy> enemyList) {
+        
+        // --- ESCALA DINÁMICA DE RESOLUCIÓN ---
+        if (assetPath.contains("cueva")) {
+            PIXELS_PER_UNIT = 48f;         // <- EL NÚMERO MÁGICO. Antes era 16f
+            FALLBACK_SPRITE_SIZE_PX = 32f; 
+            System.out.println("[DEBUG] -> MODO CUEVA DETECTADO (PPU: 96, Sprite: 32)");
+        } else {
+            PIXELS_PER_UNIT = 256f;        
+            FALLBACK_SPRITE_SIZE_PX = 512f;
+            System.out.println("[DEBUG] -> MODO MUSGO DETECTADO (PPU: 256, Sprite: 512)");
+        }
+
         Vector3f spawnPoint = new Vector3f(0f, 2f, 0f);
 
         try {
@@ -179,16 +185,18 @@ public class TiledLevelBuilder {
                         data[row * mapWidth + endCol] = 0; 
                     }
                     
-                    // Solo un toque estético para hundirnos en el pasto visual, sin romper el juego
-                    float PADDING_TOP = 16f; 
-                    float PADDING_SIDES = 6f; 
-                    float PADDING_BOTTOM = 0f;
+                    // --- PARCHE DE PADDING AISLADO ---
+                    float PADDING_TOP = (spriteSizePx <= 32f) ? 2f : 48f;   
+                    float PADDING_SIDES = (spriteSizePx <= 32f) ? 0f : 32f;  
+                    float PADDING_BOTTOM = 0f; 
+                    // ---------------------------------
 
+                    // Calculamos la caja en píxeles aplicándole el padding (margen):
                     float xLeft_px = startCol * tileW + PADDING_SIDES;
                     float xRight_px = endCol * tileW + spriteSizePx - PADDING_SIDES;
                     
                     float yBottom_px = (row + 1) * tileH - PADDING_BOTTOM; 
-                    float yTop_px = ((row + 1) * tileH - spriteSizePx) + PADDING_TOP; 
+                    float yTop_px = ((row + 1) * tileH - spriteSizePx) + PADDING_TOP;
 
                     float x1 = xLeft_px / PIXELS_PER_UNIT;
                     float x2 = xRight_px / PIXELS_PER_UNIT;

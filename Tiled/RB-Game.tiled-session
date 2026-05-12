@@ -1,11 +1,15 @@
 {
-    "activeFile": "musgo/nivel1.tmx",
+    "activeFile": "nivel2.tmx",
     "automapping.whileDrawing": false,
     "expandedProjectPaths": [
-        "musgo",
-        "."
+        ".",
+        "musgo"
     ],
     "fileStates": {
+        "Cave - Platforms.tsx": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 0.33
+        },
         "Level_37.tsx": {
             "scaleInDock": 0.03,
             "scaleInEditor": 0.33
@@ -16,7 +20,7 @@
         },
         "musgo/musgoPiso.tsx": {
             "scaleInDock": 0.0625,
-            "scaleInEditor": 0.125
+            "scaleInEditor": 0.12
         },
         "musgo/nivel1.tmx": {
             "expandedGroupLayers": [
@@ -25,11 +29,11 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 0.0625,
-            "selectedLayer": 0,
+            "scale": 0.03125,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 6608,
-                "y": 2480
+                "x": 9600,
+                "y": 1648
             }
         },
         "nivel1.tmx": {
@@ -38,6 +42,17 @@
             "viewCenter": {
                 "x": 1512,
                 "y": 336
+            }
+        },
+        "nivel2.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 0.33,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 10510.60606060606,
+                "y": 387.87878787878793
             }
         },
         "nivel2_musgo.tmj": {
@@ -50,20 +65,26 @@
         }
     },
     "last.exportedFilePath": "C:/Users/Emi/Downloads/RedBallGame/src/main/resources/Levels",
-    "last.imagePath": "C:/Users/Emi/Downloads/RedBallGame/Tiled/musgo",
+    "last.imagePath": "C:/Users/Emi/Downloads/RedBallGame/CaveAssetsMaaot/Assets 1024 Cave",
     "map.fixedSize": true,
+    "map.height": 50,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
-    "map.width": 35,
+    "map.width": 400,
+    "mapScene.enableWorlds": true,
     "openFiles": [
         "musgo/nivel1.tmx",
-        "musgo/musgoPiso.tsx"
+        "musgo/musgoPiso.tsx",
+        "nivel2.tmx",
+        "Cave - Platforms.tsx"
     ],
     "project": "RB-Game.tiled-project",
     "recentFiles": [
-        "nivel2_musgo.tmj",
-        "musgo/musgoPiso.tsx",
         "musgo/nivel1.tmx",
+        "musgo/musgoPiso.tsx",
+        "Cave - Platforms.tsx",
+        "nivel2.tmx",
+        "nivel2_musgo.tmj",
         "mastubos.tsx",
         "Level_37.tsx",
         "nivel1.tmx"
@@ -71,7 +92,7 @@
     "resizeMap.removeObjects": false,
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 512,
-        "width": 512
+        "height": 32,
+        "width": 32
     }
 }

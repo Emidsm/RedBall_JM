@@ -3,13 +3,14 @@ package com.redball;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.renderer.RenderManager;
-import com.redball.states.GameState;
-import com.redball.states.HUDState;
+import com.jme3.system.AppSettings;
+import com.redball.states.MenuState;
 
 /**
  * Red Ball Clone - JMonkeyEngine 3
  * Punto de entrada principal de la aplicación.
  * Cámara ortográfica + físicas 2D en plano XY.
+ * Pantalla completa con resolución nativa del monitor.
  */
 public class Main extends SimpleApplication {
 
@@ -18,16 +19,26 @@ public class Main extends SimpleApplication {
     public static void main(String[] args) {
         Main app = new Main();
 
-        // Configuración de ventana
-        app.setShowSettings(false);
-        com.jme3.system.AppSettings settings = new com.jme3.system.AppSettings(true);
+        AppSettings settings = new AppSettings(true);
         settings.setTitle("Red Ball - JME3");
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setSamples(4);
         settings.setFrameRate(60);
-        settings.setSamples(4); // Anti-aliasing
-        app.setSettings(settings);
 
+        // --- PANTALLA COMPLETA a resolución nativa ---
+        java.awt.GraphicsDevice gd =
+                java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment()
+                        .getDefaultScreenDevice();
+        java.awt.DisplayMode dm = gd.getDisplayMode();
+        settings.setWidth(dm.getWidth());
+        settings.setHeight(dm.getHeight());
+        settings.setFullscreen(true);
+        settings.setResizable(false);
+        settings.setFrequency(dm.getRefreshRate() > 0 ? dm.getRefreshRate() : 60);
+        settings.setBitsPerPixel(dm.getBitDepth() > 0 ? dm.getBitDepth() : 32);
+        settings.setVSync(true);
+
+        app.setShowSettings(false);
+        app.setSettings(settings);
         app.start();
     }
 
@@ -35,46 +46,39 @@ public class Main extends SimpleApplication {
     public void simpleInitApp() {
         // --- Física ---
         bulletAppState = new BulletAppState();
-        bulletAppState.setDebugEnabled(false); // true para ver hitboxes durante desarrollo
+        bulletAppState.setDebugEnabled(false);
         stateManager.attach(bulletAppState);
 
-        // --- Cámara Ortográfica (ParallelProjection) ---
+        // --- Cámara Ortográfica (igual que el Main original) ---
         setupOrthoCamera();
 
-        // --- Desactivar el FlyByCamera por defecto ---
+        // --- Desactivar FlyByCamera ---
         flyCam.setEnabled(false);
 
-        // --- Estados del juego ---
-        GameState gameState = new GameState(bulletAppState);
-        stateManager.attach(gameState);
+        // --- Mostrar cursor para los menús ---
+        inputManager.setCursorVisible(true);
 
-        HUDState hudState = new HUDState();
-        stateManager.attach(hudState);
+        // --- Arrancar con el menú principal ---
+        stateManager.attach(new MenuState(bulletAppState));
     }
 
     /**
-     * Configura la cámara en modo ortográfico.
-     * El "zoom" se controla con setFrustum; aquí 1 unidad JME = 1 pixel de referencia a 720p.
-     * Ajusta frustumSize para cambiar cuánto del mundo es visible.
+     * Cámara ortográfica idéntica al Main original.
+     * frustumSize = 10f  →  mismo "zoom" que antes.
      */
     private void setupOrthoCamera() {
         float frustumSize = 10f;
         float aspect = (float) cam.getWidth() / (float) cam.getHeight();
 
         cam.setParallelProjection(true);
-        
-        // Setters individuales explícitos
         cam.setFrustumNear(1f);
         cam.setFrustumFar(1000f);
         cam.setFrustumLeft(-frustumSize * aspect);
         cam.setFrustumRight(frustumSize * aspect);
         cam.setFrustumTop(frustumSize);
         cam.setFrustumBottom(-frustumSize);
-
-        cam.setLocation(new com.jme3.math.Vector3f(0, 0, 10f));
+        cam.setLocation(new com.jme3.math.Vector3f(0f, 0f, 10f));
         cam.lookAt(com.jme3.math.Vector3f.ZERO, com.jme3.math.Vector3f.UNIT_Y);
-        
-        // Forzar actualización de la cámara
         cam.update();
     }
 
@@ -84,7 +88,5 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleRender(RenderManager rm) { /* unused */ }
 
-    public BulletAppState getBulletAppState() {
-        return bulletAppState;
-    }
+    public BulletAppState getBulletAppState() { return bulletAppState; }
 }
