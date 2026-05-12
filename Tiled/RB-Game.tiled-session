@@ -1,0 +1,77 @@
+{
+    "activeFile": "musgo/nivel1.tmx",
+    "automapping.whileDrawing": false,
+    "expandedProjectPaths": [
+        "musgo",
+        "."
+    ],
+    "fileStates": {
+        "Level_37.tsx": {
+            "scaleInDock": 0.03,
+            "scaleInEditor": 0.33
+        },
+        "mastubos.tsx": {
+            "scaleInDock": 0.03,
+            "scaleInEditor": 0.33
+        },
+        "musgo/musgoPiso.tsx": {
+            "scaleInDock": 0.0625,
+            "scaleInEditor": 0.125
+        },
+        "musgo/nivel1.tmx": {
+            "expandedGroupLayers": [
+                3
+            ],
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 0.0625,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 6608,
+                "y": 2480
+            }
+        },
+        "nivel1.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1512,
+                "y": 336
+            }
+        },
+        "nivel2_musgo.tmj": {
+            "scale": 0.07080078125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 4802.206896551724,
+                "y": 805.0758620689653
+            }
+        }
+    },
+    "last.exportedFilePath": "C:/Users/Emi/Downloads/RedBallGame/src/main/resources/Levels",
+    "last.imagePath": "C:/Users/Emi/Downloads/RedBallGame/Tiled/musgo",
+    "map.fixedSize": true,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 35,
+    "openFiles": [
+        "musgo/nivel1.tmx",
+        "musgo/musgoPiso.tsx"
+    ],
+    "project": "RB-Game.tiled-project",
+    "recentFiles": [
+        "nivel2_musgo.tmj",
+        "musgo/musgoPiso.tsx",
+        "musgo/nivel1.tmx",
+        "mastubos.tsx",
+        "Level_37.tsx",
+        "nivel1.tmx"
+    ],
+    "resizeMap.removeObjects": false,
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 512,
+        "width": 512
+    }
+}
