@@ -23,68 +23,68 @@
  <tile id="5" type="plataforma"/>
  <tile id="6" type="plataforma"/>
  <tile id="7" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="10" y="23" width="22" height="9"/>
   </objectgroup>
  </tile>
  <tile id="8" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="9" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="10" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="11" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="12" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="13" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="14" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="15" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="16" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="17" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="18" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="32" height="9"/>
   </objectgroup>
  </tile>
  <tile id="19" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="23" width="14" height="9"/>
   </objectgroup>
  </tile>
  <tile id="20" type="plataforma">
@@ -253,53 +253,53 @@
   </objectgroup>
  </tile>
  <tile id="53" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="32" height="8"/>
   </objectgroup>
  </tile>
  <tile id="54" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="32" height="8"/>
   </objectgroup>
  </tile>
  <tile id="55" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="32" height="8"/>
   </objectgroup>
  </tile>
  <tile id="56" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="32" height="8"/>
   </objectgroup>
  </tile>
  <tile id="57" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="32" height="8"/>
   </objectgroup>
  </tile>
  <tile id="58" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="32" height="8"/>
   </objectgroup>
  </tile>
  <tile id="59" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="32" height="8"/>
   </objectgroup>
  </tile>
  <tile id="60" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="25" width="32" height="7"/>
   </objectgroup>
  </tile>
  <tile id="61" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="32" height="8"/>
   </objectgroup>
  </tile>
  <tile id="62" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="24" width="17" height="8"/>
   </objectgroup>
  </tile>
  <tile id="63" type="plataforma">
@@ -1108,98 +1108,98 @@
   </objectgroup>
  </tile>
  <tile id="224" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="28" y="4" width="4" height="28"/>
   </objectgroup>
  </tile>
  <tile id="225" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="226" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="227" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="228" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="4" width="32" height="28"/>
   </objectgroup>
  </tile>
  <tile id="229" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="230" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="231" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="232" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="233" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="234" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="235" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="236" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="237" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="1" width="32" height="31"/>
   </objectgroup>
  </tile>
  <tile id="238" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="2" width="32" height="30"/>
   </objectgroup>
  </tile>
  <tile id="239" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="1" width="32" height="31"/>
   </objectgroup>
  </tile>
  <tile id="240" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="0" width="32" height="32"/>
   </objectgroup>
  </tile>
  <tile id="241" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="32" height="29"/>
   </objectgroup>
  </tile>
  <tile id="242" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="5" width="14" height="27"/>
   </objectgroup>
  </tile>
  <tile id="243" type="plataforma">
@@ -3032,96 +3032,24 @@
    <object id="1" x="0" y="0" width="32" height="32"/>
   </objectgroup>
  </tile>
- <tile id="609" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="610" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="611" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="612" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="613" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="614" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="615" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="616" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="617" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="618" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="619" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="620" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="621" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="622" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="623" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="624" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="625" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="626" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
+ <tile id="609" type="plataforma"/>
+ <tile id="610" type="plataforma"/>
+ <tile id="611" type="plataforma"/>
+ <tile id="612" type="plataforma"/>
+ <tile id="613" type="plataforma"/>
+ <tile id="614" type="plataforma"/>
+ <tile id="615" type="plataforma"/>
+ <tile id="616" type="plataforma"/>
+ <tile id="617" type="plataforma"/>
+ <tile id="618" type="plataforma"/>
+ <tile id="619" type="plataforma"/>
+ <tile id="620" type="plataforma"/>
+ <tile id="621" type="plataforma"/>
+ <tile id="622" type="plataforma"/>
+ <tile id="623" type="plataforma"/>
+ <tile id="624" type="plataforma"/>
+ <tile id="625" type="plataforma"/>
+ <tile id="626" type="plataforma"/>
  <tile id="627" type="plataforma">
   <objectgroup>
    <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
@@ -3193,43 +3121,43 @@
   </objectgroup>
  </tile>
  <tile id="641" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="16" y="8" width="16" height="24"/>
   </objectgroup>
  </tile>
  <tile id="642" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="0" width="32" height="32"/>
   </objectgroup>
  </tile>
  <tile id="643" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="0" width="32" height="32"/>
   </objectgroup>
  </tile>
  <tile id="644" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="4" width="32" height="28"/>
   </objectgroup>
  </tile>
  <tile id="645" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="4" width="32" height="28"/>
   </objectgroup>
  </tile>
  <tile id="646" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="4" width="32" height="28"/>
   </objectgroup>
  </tile>
  <tile id="647" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="15" height="26"/>
   </objectgroup>
  </tile>
  <tile id="648" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="18" y="6" width="14" height="26"/>
   </objectgroup>
  </tile>
  <tile id="649" type="plataforma">
@@ -3277,11 +3205,7 @@
    <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
- <tile id="658" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
+ <tile id="658" type="plataforma"/>
  <tile id="659" type="plataforma">
   <objectgroup>
    <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
@@ -3437,11 +3361,7 @@
    <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
   </objectgroup>
  </tile>
- <tile id="690" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
+ <tile id="690" type="plataforma"/>
  <tile id="691" type="plataforma">
   <objectgroup>
    <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
@@ -3553,55 +3473,19 @@
   </objectgroup>
  </tile>
  <tile id="713" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="3">
+   <object id="3" x="0" y="32" width="32"/>
   </objectgroup>
  </tile>
- <tile id="714" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="715" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="716" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="717" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="718" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="719" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="720" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="721" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
- <tile id="722" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
-  </objectgroup>
- </tile>
+ <tile id="714" type="plataforma"/>
+ <tile id="715" type="plataforma"/>
+ <tile id="716" type="plataforma"/>
+ <tile id="717" type="plataforma"/>
+ <tile id="718" type="plataforma"/>
+ <tile id="719" type="plataforma"/>
+ <tile id="720" type="plataforma"/>
+ <tile id="721" type="plataforma"/>
+ <tile id="722" type="plataforma"/>
  <tile id="723" type="plataforma">
   <objectgroup>
    <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
@@ -3813,18 +3697,18 @@
   </objectgroup>
  </tile>
  <tile id="765" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="0" width="32" height="21"/>
   </objectgroup>
  </tile>
  <tile id="766" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="0" width="32" height="21"/>
   </objectgroup>
  </tile>
  <tile id="767" type="plataforma">
-  <objectgroup>
-   <object id="1" x="0" y="0" width="32" height="32"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="0" width="10" height="11"/>
   </objectgroup>
  </tile>
  <tile id="768" type="plataforma">
@@ -4439,7 +4323,8 @@
  </tile>
  <tile id="890" type="plataforma">
   <objectgroup draworder="index" id="2">
-   <object id="2" x="0" y="19" width="32" height="13"/>
+   <object id="3" x="0" y="32" width="32"/>
+   <object id="4" x="0" y="19" width="32" height="13"/>
   </objectgroup>
  </tile>
  <tile id="891" type="plataforma">
@@ -4508,68 +4393,68 @@
   </objectgroup>
  </tile>
  <tile id="904" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="12" y="6" width="20" height="26"/>
   </objectgroup>
  </tile>
  <tile id="905" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="906" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="907" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="908" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="909" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="910" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="911" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="912" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="913" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="914" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="915" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="32" height="26"/>
   </objectgroup>
  </tile>
  <tile id="916" type="plataforma">
-  <objectgroup>
-   <object id="1" name="plataforma" type="plataforma" x="0" y="0" width="32" height="17"/>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="6" width="17" height="26"/>
   </objectgroup>
  </tile>
  <tile id="917" type="plataforma">

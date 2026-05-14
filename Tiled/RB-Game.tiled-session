@@ -1,5 +1,5 @@
 {
-    "activeFile": "nivel2.tmx",
+    "activeFile": "musgo/nivel1.tmx",
     "automapping.whileDrawing": false,
     "expandedProjectPaths": [
         ".",
@@ -8,7 +8,7 @@
     "fileStates": {
         "Cave - Platforms.tsx": {
             "scaleInDock": 0.33,
-            "scaleInEditor": 0.33
+            "scaleInEditor": 0.12
         },
         "Level_37.tsx": {
             "scaleInDock": 0.03,
@@ -29,11 +29,11 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 0.03125,
-            "selectedLayer": 1,
+            "scale": 0.125,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 9600,
-                "y": 1648
+                "x": 5180,
+                "y": 440
             }
         },
         "nivel1.tmx": {
@@ -48,11 +48,11 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 0.33,
-            "selectedLayer": 0,
+            "scale": 1,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 10510.60606060606,
-                "y": 387.87878787878793
+                "x": 2033.5,
+                "y": 253
             }
         },
         "nivel2_musgo.tmj": {
@@ -80,10 +80,10 @@
     ],
     "project": "RB-Game.tiled-project",
     "recentFiles": [
-        "musgo/nivel1.tmx",
-        "musgo/musgoPiso.tsx",
         "Cave - Platforms.tsx",
         "nivel2.tmx",
+        "musgo/musgoPiso.tsx",
+        "musgo/nivel1.tmx",
         "nivel2_musgo.tmj",
         "mastubos.tsx",
         "Level_37.tsx",

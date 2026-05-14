@@ -19,6 +19,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 
+
 /**
  * MenuState — Pantalla principal.
  * Muestra moon.png de fondo + instrucción de teclado.
@@ -117,8 +118,8 @@ public class MenuState extends AbstractAppState implements ActionListener {
 
     private void startGame() {
         AppStateManager sm = app.getStateManager();
-        sm.attach(new HUDState());
-        sm.attach(new GameState(bulletAppState, 1));
+        // Redirigir al selector de niveles en lugar del juego directo
+        sm.attach(new LevelSelectState(bulletAppState));
         sm.detach(this);
     }
 
