@@ -31,7 +31,7 @@ public class Main extends SimpleApplication {
         java.awt.DisplayMode dm = gd.getDisplayMode();
         settings.setWidth(dm.getWidth());
         settings.setHeight(dm.getHeight());
-        settings.setFullscreen(true);
+        settings.setFullscreen(false);
         settings.setResizable(false);
         settings.setFrequency(dm.getRefreshRate() > 0 ? dm.getRefreshRate() : 60);
         settings.setBitsPerPixel(dm.getBitDepth() > 0 ? dm.getBitDepth() : 32);
@@ -46,7 +46,7 @@ public class Main extends SimpleApplication {
     public void simpleInitApp() {
         // --- Física ---
         bulletAppState = new BulletAppState();
-        bulletAppState.setDebugEnabled(false);
+        bulletAppState.setDebugEnabled(true);
         stateManager.attach(bulletAppState);
 
         // --- Cámara Ortográfica (igual que el Main original) ---
@@ -67,7 +67,7 @@ public class Main extends SimpleApplication {
      * frustumSize = 10f  →  mismo "zoom" que antes.
      */
     private void setupOrthoCamera() {
-        float frustumSize = 10f;
+        float frustumSize = 7f;
         float aspect = (float) cam.getWidth() / (float) cam.getHeight();
 
         cam.setParallelProjection(true);

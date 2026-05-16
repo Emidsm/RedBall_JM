@@ -103,8 +103,9 @@ public class TiledLevelBuilder {
                     String capaClass = layer.tiledClass != null ? layer.tiledClass : "";
                     
                     if ("tilelayer".equals(layer.type) && layer.data != null && "plataforma".equals(capaClass)) {
+                        // Agregamos assetPath al final de esta llamada:
                         buildCollisionsFromTileLayer(layer.data, mapData.width,
-                                mapData.tilewidth, mapData.tileheight, spriteSizePx); 
+                                mapData.tilewidth, mapData.tileheight, spriteSizePx, assetPath); 
                     }
                 }
             }
@@ -168,7 +169,11 @@ public class TiledLevelBuilder {
      * UNA sola caja sólida, igual que si hubieras dibujado el rectángulo
      * en la capa de objetos — pero alineada pixel-perfect con el visual.
      */
-    private void buildCollisionsFromTileLayer(int[] data, int mapWidth, int tileW, int tileH, float spriteSizePx) {
+    /**
+     * Lee todos los tiles no-vacíos del layer, los agrupa por proximidad
+     * y crea un BoxCollisionShape por grupo con padding condicional.
+     */
+    private void buildCollisionsFromTileLayer(int[] data, int mapWidth, int tileW, int tileH, float spriteSizePx, String assetPath) {
         int mapHeight = data.length / mapWidth;
         int colStep = (int) (spriteSizePx / tileW); 
 
@@ -185,12 +190,31 @@ public class TiledLevelBuilder {
                         data[row * mapWidth + endCol] = 0; 
                     }
                     
-                    // --- PARCHE DE PADDING AISLADO ---
-                    float PADDING_TOP = (spriteSizePx <= 32f) ? 2f : 48f;   
-                    float PADDING_SIDES = (spriteSizePx <= 32f) ? 0f : 32f;  
-                    float PADDING_BOTTOM = 0f; 
-                    // ---------------------------------
+                    // --- NUEVA LÓGICA DE PADDING DINÁMICO ---
+                    float PADDING_TOP, PADDING_SIDES, PADDING_BOTTOM;
 
+                    if (assetPath.contains("nivel2_musgo.tmj")) {
+                        // Nivel 1: Se queda exactamente igual (sin modificaciones)
+                        PADDING_TOP = (spriteSizePx <= 32f) ? 2f : 48f;   
+                        PADDING_SIDES = (spriteSizePx <= 32f) ? 0f : 32f;  
+                        PADDING_BOTTOM = 0f; 
+                        
+                    } else if (assetPath.contains("nivel3_cueva.tmj")) {
+                        // Nivel 2 (Cueva): Menos copete arriba
+                        // Bajamos el recorte superior a la mitad (10%) o lo que necesites, 
+                        // manteniendo los lados y abajo igual.
+                        PADDING_TOP = spriteSizePx * 0.10f;    // <-- ¡Aquí está tu ajuste!
+                        PADDING_SIDES = spriteSizePx * 0.20f;  
+                        PADDING_BOTTOM = spriteSizePx * 0.20f; 
+                        
+                    } else {
+                        // Nivel 3 (Musgo nuevo): Reducción del ~40% (20% por lado)
+                        PADDING_TOP = spriteSizePx * 0.20f;    
+                        PADDING_SIDES = spriteSizePx * 0.20f;  
+                        PADDING_BOTTOM = spriteSizePx * 0.20f; 
+                    }
+                    // ----------------------------------------
+                    
                     // Calculamos la caja en píxeles aplicándole el padding (margen):
                     float xLeft_px = startCol * tileW + PADDING_SIDES;
                     float xRight_px = endCol * tileW + spriteSizePx - PADDING_SIDES;

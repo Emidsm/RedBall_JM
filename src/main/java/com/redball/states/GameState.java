@@ -40,10 +40,16 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
     // =========================================================================
 
     /** Rutas de los archivos .tmj, indexadas a partir de 1. */
+    // =========================================================================
+    // MAPA DE NIVELES — añade aquí rutas para nuevos niveles
+    // =========================================================================
+
+    /** Rutas de los archivos .tmj, indexadas a partir de 1. */
     private static final String[] LEVEL_PATHS = {
         null,                              // [0] no usado
         "Levels/nivel2_musgo.tmj",         // [1] nivel musgo
         "Levels/nivel3_cueva.tmj",         // [2] nivel cueva
+        "Levels/nivel3_musgo.tmj"          // [3] NUEVO nivel 3
     };
 
     /** Número total de niveles disponibles. */
@@ -127,9 +133,13 @@ public class GameState extends AbstractAppState implements PhysicsCollisionListe
         enemies.clear();
 
         // Seleccionar fondo según nivel
-        backgroundTexPath = (levelIndex == 2)
-                ? "Textures/Background2.png"
-                : "Textures/background.png";
+        if (levelIndex == 2) {
+            backgroundTexPath = "Textures/Background2.png";
+        } else if (levelIndex == 3) {
+            backgroundTexPath = "Textures/Background3.png";
+        } else {
+            backgroundTexPath = "Textures/background.png"; // Fondo por defecto (Nivel 1)
+        }
 
         // Construir el nivel mediante TiledLevelBuilder
         String levelPath = resolveLevelPath(levelIndex);
