@@ -293,7 +293,7 @@
                  "name":"bandera",
                  "opacity":1,
                  "rotation":0,
-                 "type":"bandera",
+                 "type":"meta",
                  "visible":true,
                  "width":288,
                  "x":11968,

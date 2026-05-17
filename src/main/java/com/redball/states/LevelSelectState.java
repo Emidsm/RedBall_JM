@@ -10,11 +10,11 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
@@ -33,7 +33,8 @@ public class LevelSelectState extends AbstractAppState implements ActionListener
     private BitmapFont font;
     private BulletAppState bulletAppState;
 
-    private Node buttonsNode; // Agrupa los botones para facilitar la limpieza
+    private Node selectNode;
+    private Geometry btnBack;
 
     public LevelSelectState(BulletAppState bulletAppState) {
         this.bulletAppState = bulletAppState;
@@ -46,97 +47,115 @@ public class LevelSelectState extends AbstractAppState implements ActionListener
         this.guiNode = app.getGuiNode();
         this.assetManager = app.getAssetManager();
         this.inputManager = app.getInputManager();
+        
+        // Carga una fuente gruesa (puedes generar un .fnt de Poppins o usar la default limpia)
         this.font = assetManager.loadFont("Interface/Fonts/Default.fnt");
 
-        buttonsNode = new Node("LevelButtonsNode");
-        guiNode.attachChild(buttonsNode);
+        selectNode = new Node("SelectNode");
+        guiNode.attachChild(selectNode);
 
+        buildBackground();
         buildLevelButtons();
         registerInput();
     }
 
-    private void buildLevelButtons() {
-        float sw = app.getCamera().getWidth();
-        float sh = app.getCamera().getHeight();
-        
-        BitmapText title = new BitmapText(font, false);
-        title.setSize(font.getCharSet().getRenderedSize() * 2f);
-        title.setText("Selecciona un Nivel");
-        title.setLocalTranslation((sw - title.getLineWidth()) / 2f, sh - 50f, 0);
-        buttonsNode.attachChild(title);
+    private void buildBackground() {
+        float sw = app.getCamera().getWidth(), sh = app.getCamera().getHeight();
+        Geometry bg = new Geometry("SelectBG", new Quad(sw, sh));
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        try {
+            Texture tex = assetManager.loadTexture("Textures/background_levels.png");
+            mat.setTexture("ColorMap", tex);
+        } catch (Exception e) {
+            mat.setColor("Color", new ColorRGBA(0.1f, 0.1f, 0.2f, 1f));
+        }
+        bg.setMaterial(mat);
+        selectNode.attachChild(bg);
+    }
 
-        float startX = sw / 2f - 150f;
-        float startY = sh / 2f;
+    private void buildLevelButtons() {
+        float sw = app.getCamera().getWidth(), sh = app.getCamera().getHeight();
+
+        // Botón de Volver (Esquina superior izquierda)
+        btnBack = new Geometry("BtnBack", new Quad(50f, 50f));
+        Material matBack = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        matBack.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        try {
+            matBack.setTexture("ColorMap", assetManager.loadTexture("Textures/button_back.png"));
+        } catch (Exception e) {
+            matBack.setColor("Color", ColorRGBA.Gray);
+        }
+        btnBack.setMaterial(matBack);
+        btnBack.setLocalTranslation(30f, sh - 80f, 1f);
+        selectNode.attachChild(btnBack);
+
+        // Cuadrícula de Niveles usando el sprite vacío limpio
+        float startX = sw / 2f - 180f;
+        float startY = sh / 2f - 40f;
         float btnSize = 80f;
         float gap = 40f;
 
         for (int i = 1; i <= GameState.TOTAL_LEVELS; i++) {
-            Quad quad = new Quad(btnSize, btnSize);
-            Geometry btn = new Geometry("LevelBtn_" + i, quad);
-            
-            Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+            Geometry btn = new Geometry("LevelBtn_" + i, new Quad(btnSize, btnSize));
+            Material matBtn = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+            matBtn.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
             try {
-                Texture tex = assetManager.loadTexture("Textures/level" + i + ".png");
-                mat.setTexture("ColorMap", tex);
+                matBtn.setTexture("ColorMap", assetManager.loadTexture("Textures/button_empty.png"));
             } catch (Exception e) {
-                // Fallback: Cuadro azul si no hay sprite
-                mat.setColor("Color", ColorRGBA.Blue);
+                matBtn.setColor("Color", ColorRGBA.Blue);
             }
-            btn.setMaterial(mat);
-            
-            float posX = startX + ((i - 1) * (btnSize + gap));
-            btn.setLocalTranslation(posX, startY, 0);
-            btn.setUserData("levelIndex", i); // Guardamos el índice del nivel aquí
-            
-            buttonsNode.attachChild(btn);
+            btn.setMaterial(matBtn);
 
-            // Texto del número encima del botón
+            float posX = startX + ((i - 1) * (btnSize + gap));
+            btn.setLocalTranslation(posX, startY, 1f);
+            btn.setUserData("levelIndex", i);
+            selectNode.attachChild(btn);
+
+            // Superponer el número del nivel sobre el sprite limpio
             BitmapText numText = new BitmapText(font, false);
-            numText.setSize(font.getCharSet().getRenderedSize() * 1.5f);
+            numText.setSize(font.getCharSet().getRenderedSize() * 1.8f);
+            numText.setColor(ColorRGBA.White);
             numText.setText(String.valueOf(i));
-            numText.setLocalTranslation(posX + btnSize/2f - 10f, startY + btnSize/2f + 10f, 1);
-            buttonsNode.attachChild(numText);
+            // Centrado aproximado del texto
+            numText.setLocalTranslation(posX + (btnSize / 2f) - 12f, startY + (btnSize / 2f) + 18f, 2f);
+            selectNode.attachChild(numText);
         }
     }
 
     private void registerInput() {
-        inputManager.addMapping("ClickSelect", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addListener(this, "ClickSelect");
+        inputManager.addMapping("SelectClick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addListener(this, "SelectClick");
     }
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-        if ("ClickSelect".equals(name) && isPressed) {
+        if ("SelectClick".equals(name) && isPressed) {
             Vector2f click2d = inputManager.getCursorPosition();
             Vector3f click3d = new Vector3f(click2d.x, click2d.y, 10f);
-            Vector3f dir = new Vector3f(0, 0, -1f);
-            Ray ray = new Ray(click3d, dir);
-
+            Ray ray = new Ray(click3d, new Vector3f(0, 0, -1f));
             CollisionResults results = new CollisionResults();
-            buttonsNode.collideWith(ray, results);
+            selectNode.collideWith(ray, results);
 
             if (results.size() > 0) {
                 Geometry target = results.getClosestCollision().getGeometry();
-                if (target.getName().startsWith("LevelBtn_")) {
+                if ("BtnBack".equals(target.getName())) {
+                    app.getStateManager().attach(new MenuState(bulletAppState));
+                    app.getStateManager().detach(this);
+                } else if (target.getName().startsWith("LevelBtn_")) {
                     int level = target.getUserData("levelIndex");
-                    startGame(level);
+                    // Redirige a la nueva Pantalla de Carga
+                    app.getStateManager().attach(new LoadingState(bulletAppState, level));
+                    app.getStateManager().detach(this);
                 }
             }
         }
     }
 
-    private void startGame(int levelIndex) {
-        AppStateManager sm = app.getStateManager();
-        sm.attach(new HUDState());
-        sm.attach(new GameState(bulletAppState, levelIndex));
-        sm.detach(this);
-    }
-
     @Override
     public void cleanup() {
         super.cleanup();
-        guiNode.detachChild(buttonsNode);
-        try { inputManager.deleteMapping("ClickSelect"); } catch (Exception ignored) {}
+        guiNode.detachChild(selectNode);
+        try { inputManager.deleteMapping("SelectClick"); } catch (Exception ignored) {}
         inputManager.removeListener(this);
     }
 }

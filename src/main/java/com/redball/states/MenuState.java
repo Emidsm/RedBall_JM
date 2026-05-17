@@ -5,37 +5,36 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.font.BitmapFont;
-import com.jme3.font.BitmapText;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 
-
-/**
- * MenuState — Pantalla principal.
- * Muestra moon.png de fondo + instrucción de teclado.
- * ENTER → empieza el nivel 1.
- */
 public class MenuState extends AbstractAppState implements ActionListener {
 
     private SimpleApplication app;
-    private Node              guiNode;
-    private AssetManager      assetManager;
-    private InputManager      inputManager;
-    private Camera            cam;
+    private Node guiNode;
+    private AssetManager assetManager;
+    private InputManager inputManager;
+    private Camera cam;
 
-    private Geometry   bgGeom;
-    private Geometry   playBtnGeom;
-    private BitmapText promptText;
+    private Node menuNode;
+    private Geometry bgGeom;
+    private Geometry btnPlay;
+    private Geometry btnExit;
 
     private final com.jme3.bullet.BulletAppState bulletAppState;
 
@@ -46,15 +45,19 @@ public class MenuState extends AbstractAppState implements ActionListener {
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
-        this.app          = (SimpleApplication) application;
-        this.guiNode      = app.getGuiNode();
+        this.app = (SimpleApplication) application;
+        this.guiNode = app.getGuiNode();
         this.assetManager = app.getAssetManager();
         this.inputManager = app.getInputManager();
-        this.cam          = app.getCamera();
+        this.cam = app.getCamera();
+
+        menuNode = new Node("MenuNode");
+        // Aseguramos que todo el nodo herede el comportamiento de la GUI
+        menuNode.setQueueBucket(RenderQueue.Bucket.Gui);
+        guiNode.attachChild(menuNode);
 
         buildBackground();
-        buildPlayButton();
-        buildPrompt();
+        buildButtons();
         registerInput();
     }
 
@@ -63,73 +66,103 @@ public class MenuState extends AbstractAppState implements ActionListener {
         Quad quad = new Quad(sw, sh);
         bgGeom = new Geometry("MenuBG", quad);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        
+        // Desactivamos la prueba de profundidad para evitar colisiones de renderizado 2D
+        mat.getAdditionalRenderState().setDepthTest(false);
+        mat.getAdditionalRenderState().setDepthWrite(false);
+        
         try {
-            Texture tex = assetManager.loadTexture("Textures/moon.png");
+            Texture tex = assetManager.loadTexture("Textures/background_main.png");
             mat.setTexture("ColorMap", tex);
         } catch (Exception e) {
-            mat.setColor("Color", new ColorRGBA(0.05f, 0.02f, 0.12f, 1f));
+            mat.setColor("Color", new ColorRGBA(0.05f, 0.05f, 0.15f, 1f));
         }
         bgGeom.setMaterial(mat);
-        bgGeom.setLocalTranslation(0f, 0f, 0f);
-        guiNode.attachChild(bgGeom);
+        bgGeom.setQueueBucket(RenderQueue.Bucket.Gui);
+        menuNode.attachChild(bgGeom);
     }
 
-    private void buildPlayButton() {
+    private void buildButtons() {
         float sw = cam.getWidth(), sh = cam.getHeight();
-        float btnW = 200f, btnH = 80f;
-        Quad quad = new Quad(btnW, btnH);
-        playBtnGeom = new Geometry("PlayBtn", quad);
+        
+        // 1. FORMA CUADRADA: Mismo ancho y alto para que no se apachurren los círculos
+        float btnSize = 120f; 
+        
+        // 2. DISTRIBUCIÓN HORIZONTAL:
+        float gap = 60f; // Espacio de separación entre los botones
+        
+        // Calculamos el ancho total que ocupa el "bloque" de los dos botones
+        float totalWidth = (btnSize * 2) + gap;
+        
+        // Posición X inicial para que todo el bloque quede perfectamente centrado
+        float startX = (sw - totalWidth) / 2f;
+        
+        // Posición Y para ambos (centrados verticalmente, o ajusta si los quieres más abajo)
+        float posY = (sh - btnSize) / 2f;
+
+        // Botón Jugar (Se dibuja a la izquierda)
+        btnPlay = createMenuButton("BtnPlay", "Textures/button_play.png", ColorRGBA.Green, btnSize, btnSize);
+        btnPlay.setLocalTranslation(startX, posY, 1f);
+        menuNode.attachChild(btnPlay);
+
+        // Botón Salir (Se dibuja a la derecha)
+        btnExit = createMenuButton("BtnExit", "Textures/button_exit.png", ColorRGBA.Red, btnSize, btnSize);
+        // X = inicio + tamaño del primer botón + espacio de separación
+        btnExit.setLocalTranslation(startX + btnSize + gap, posY, 1f);
+        menuNode.attachChild(btnExit);
+    }
+
+    private Geometry createMenuButton(String name, String texPath, ColorRGBA fallback, float w, float h) {
+        Quad quad = new Quad(w, h);
+        Geometry geom = new Geometry(name, quad);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha);
+        
+        mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        mat.getAdditionalRenderState().setDepthTest(false);
+        mat.getAdditionalRenderState().setDepthWrite(false);
+        
         try {
-            Texture tex = assetManager.loadTexture("Textures/playbutton.png");
+            Texture tex = assetManager.loadTexture(texPath);
             mat.setTexture("ColorMap", tex);
         } catch (Exception e) {
-            mat.setColor("Color", new ColorRGBA(0.1f, 0.8f, 0.1f, 1f));
+            mat.setColor("Color", fallback);
         }
-        playBtnGeom.setMaterial(mat);
-        playBtnGeom.setQueueBucket(com.jme3.renderer.queue.RenderQueue.Bucket.Transparent);
-        playBtnGeom.setLocalTranslation((sw - btnW) / 2f, (sh - btnH) / 2f - 40f, 1f);
-        guiNode.attachChild(playBtnGeom);
-    }
-
-    private void buildPrompt() {
-        float sw = cam.getWidth(), sh = cam.getHeight();
-        BitmapFont font = assetManager.loadFont("Interface/Fonts/Default.fnt");
-        promptText = new BitmapText(font, false);
-        promptText.setSize(font.getCharSet().getRenderedSize() * 1.4f);
-        promptText.setColor(ColorRGBA.White);
-        promptText.setText("Presiona ENTER para jugar");
-        float tw = promptText.getLineWidth();
-        promptText.setLocalTranslation((sw - tw) / 2f, sh / 2f - 140f, 2f);
-        guiNode.attachChild(promptText);
+        geom.setMaterial(mat);
+        geom.setQueueBucket(RenderQueue.Bucket.Gui); // Corregido: Forzar modo GUI
+        return geom;
     }
 
     private void registerInput() {
-        inputManager.addMapping("MenuPlay", new KeyTrigger(KeyInput.KEY_RETURN),
-                                            new KeyTrigger(KeyInput.KEY_SPACE));
-        inputManager.addListener(this, "MenuPlay");
+        inputManager.addMapping("MenuClick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addListener(this, "MenuClick");
     }
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-        if ("MenuPlay".equals(name) && isPressed) startGame();
-    }
+        if ("MenuClick".equals(name) && isPressed) {
+            Vector2f click2d = inputManager.getCursorPosition();
+            Vector3f click3d = new Vector3f(click2d.x, click2d.y, 10f);
+            Ray ray = new Ray(click3d, new Vector3f(0, 0, -1f));
+            CollisionResults results = new CollisionResults();
+            menuNode.collideWith(ray, results);
 
-    private void startGame() {
-        AppStateManager sm = app.getStateManager();
-        // Redirigir al selector de niveles en lugar del juego directo
-        sm.attach(new LevelSelectState(bulletAppState));
-        sm.detach(this);
+            if (results.size() > 0) {
+                Geometry target = results.getClosestCollision().getGeometry();
+                if ("BtnPlay".equals(target.getName())) {
+                    app.getStateManager().attach(new LevelSelectState(bulletAppState));
+                    app.getStateManager().detach(this);
+                } else if ("BtnExit".equals(target.getName())) {
+                    app.stop();
+                }
+            }
+        }
     }
 
     @Override
     public void cleanup() {
         super.cleanup();
-        guiNode.detachChild(bgGeom);
-        guiNode.detachChild(playBtnGeom);
-        guiNode.detachChild(promptText);
-        try { inputManager.deleteMapping("MenuPlay"); } catch (Exception ignored) {}
+        guiNode.detachChild(menuNode);
+        try { inputManager.deleteMapping("MenuClick"); } catch (Exception ignored) {}
         inputManager.removeListener(this);
     }
 }

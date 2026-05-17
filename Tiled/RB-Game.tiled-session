@@ -1,5 +1,5 @@
 {
-    "activeFile": "C:/Users/Emi/Downloads/RedBallGame/src/main/resources/Levels/nivel1.tmj",
+    "activeFile": "C:/Users/Emi/Downloads/RedBallGame/src/main/resources/Levels/nivel3_musgo.tmj",
     "automapping.whileDrawing": false,
     "expandedProjectPaths": [
         ".",
@@ -29,16 +29,16 @@
             "expandedObjectLayers": [
                 3
             ],
-            "scale": 0.0625,
+            "scale": 0.125,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 8328,
-                "y": 896
+                "x": 11308,
+                "y": 1960
             }
         },
         "Cave - Platforms.tsx": {
             "scaleInDock": 0.33,
-            "scaleInEditor": 0.12
+            "scaleInEditor": 0.75
         },
         "Level_37.tsx": {
             "scaleInDock": 0.03,
@@ -62,8 +62,8 @@
             "scale": 0.03125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 9584,
-                "y": 1632
+                "x": 9600,
+                "y": 1648
             }
         },
         "nivel1.tmx": {
@@ -78,11 +78,11 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 0.75,
+            "scale": 0.25,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 7403.333333333333,
-                "y": 501.33333333333326
+                "x": 10086,
+                "y": 620
             }
         },
         "nivel2_musgo.tmj": {
@@ -118,8 +118,7 @@
         "musgo/musgoPiso.tsx",
         "nivel2.tmx",
         "Cave - Platforms.tsx",
-        "C:/Users/Emi/Downloads/RedBallGame/src/main/resources/Levels/nivel3_musgo.tmj",
-        "C:/Users/Emi/Downloads/RedBallGame/src/main/resources/Levels/nivel1.tmj"
+        "C:/Users/Emi/Downloads/RedBallGame/src/main/resources/Levels/nivel3_musgo.tmj"
     ],
     "project": "RB-Game.tiled-project",
     "recentFiles": [

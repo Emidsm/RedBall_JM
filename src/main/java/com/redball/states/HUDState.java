@@ -1,10 +1,10 @@
 package com.redball.states;
 
-import com.jme3.asset.AssetManager;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.collision.CollisionResults;
 import com.jme3.font.BitmapFont;
@@ -14,6 +14,7 @@ import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
@@ -21,7 +22,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import com.jme3.texture.Texture;
 
 public class HUDState extends AbstractAppState implements ActionListener {
 
@@ -31,14 +31,12 @@ public class HUDState extends AbstractAppState implements ActionListener {
     private InputManager inputManager;
     private BitmapFont font;
 
-    private Node hudElements;
+    private Node hudNode;
+    private Node pauseMenuSubNode; // Agrupa los sub-botones desplegables de pausa
+
     private BitmapText livesText;
     private BitmapText centerText;
-    
-    // Botones de control
     private Geometry pauseBtn;
-    private Geometry restartBtn;
-    private Geometry resumeBtn;
 
     private int lives = 3;
     private float centerTextTimer = 0f;
@@ -53,62 +51,92 @@ public class HUDState extends AbstractAppState implements ActionListener {
         this.inputManager = app.getInputManager();
 
         font = assetManager.loadFont("Interface/Fonts/Default.fnt");
-        hudElements = new Node("HUDElements");
-        guiNode.attachChild(hudElements);
+        
+        hudNode = new Node("HUDNode");
+        pauseMenuSubNode = new Node("PauseMenuSubNode");
+        
+        guiNode.attachChild(hudNode);
 
-        buildTexts();
-        buildButtons();
+        buildHUDGameplay();
         registerInput();
     }
 
-    private void buildTexts() {
-        int screenW = app.getCamera().getWidth();
-        int screenH = app.getCamera().getHeight();
+    private void buildHUDGameplay() {
+        float sw = app.getCamera().getWidth();
+        float sh = app.getCamera().getHeight();
 
+        // Vidas
         livesText = new BitmapText(font, false);
         livesText.setSize(font.getCharSet().getRenderedSize() * 1.5f);
         livesText.setColor(ColorRGBA.White);
         livesText.setText("❤ x " + lives);
-        livesText.setLocalTranslation(20, screenH - 20, 0);
-        hudElements.attachChild(livesText);
+        livesText.setLocalTranslation(20, sh - 20, 1f);
+        hudNode.attachChild(livesText);
 
+        // Texto informativo central
         centerText = new BitmapText(font, false);
         centerText.setSize(font.getCharSet().getRenderedSize() * 2f);
         centerText.setColor(ColorRGBA.Yellow);
         centerText.setText("");
-        centerText.setLocalTranslation(screenW / 2f - 100f, screenH / 2f + 30f, 0);
-        hudElements.attachChild(centerText);
+        centerText.setLocalTranslation(sw / 2f - 120f, sh / 2f + 50f, 1f);
+        hudNode.attachChild(centerText);
+
+        // ÚNICO botón inicial en el juego: Botón Pausa
+        pauseBtn = createHUDButton("BtnPause", "Textures/button_pause.png", ColorRGBA.Cyan, 50f, 50f);
+        pauseBtn.setLocalTranslation(sw - 70f, sh - 70f, 1f);
+        hudNode.attachChild(pauseBtn);
     }
 
-    private void buildButtons() {
-        float sw = app.getCamera().getWidth();
-        float sh = app.getCamera().getHeight();
-        
-        // Botón Pausa (Esquina superior derecha)
-        pauseBtn = createButton("BtnPause", "Textures/pause.png", ColorRGBA.Cyan, 50f, 50f);
-        pauseBtn.setLocalTranslation(sw - 70f, sh - 70f, 0);
-        hudElements.attachChild(pauseBtn);
+    private void showPauseMenuElements(boolean show) {
+        if (show) {
+            float sw = app.getCamera().getWidth();
+            float sh = app.getCamera().getHeight();
+            
+            pauseMenuSubNode.detachAllChildren();
 
-        // Botón Reiniciar (Al lado del botón de pausa)
-        restartBtn = createButton("BtnRestart", "Textures/restart.png", ColorRGBA.Magenta, 50f, 50f);
-        restartBtn.setLocalTranslation(sw - 140f, sh - 70f, 0);
-        hudElements.attachChild(restartBtn);
+            // Fondo translúcido de pausa
+            Geometry overlay = new Geometry("Overlay", new Quad(sw, sh));
+            Material matOver = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+            matOver.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+            matOver.setColor("Color", new ColorRGBA(0f, 0f, 0f, 0.6f));
+            overlay.setMaterial(matOver);
+            pauseMenuSubNode.attachChild(overlay);
 
-        // Botón Reanudar (Oculto por defecto, en el centro de la pantalla)
-        resumeBtn = createButton("BtnResume", "Textures/resume.png", ColorRGBA.Green, 200f, 80f);
-        resumeBtn.setLocalTranslation((sw - 200f) / 2f, (sh - 80f) / 2f, 0);
-        // No lo adjuntamos todavía
+            // Despliegue de los 3 botones en el centro de la pantalla
+            float cx = sw / 2f;
+            float cy = sh / 2f;
+
+            // 1. Reanudar (Play)
+            Geometry btnResume = createHUDButton("BtnResume", "Textures/button_play.png", ColorRGBA.Green, 70f, 70f);
+            btnResume.setLocalTranslation(cx - 110f, cy - 35f, 1f);
+            pauseMenuSubNode.attachChild(btnResume);
+
+            // 2. Reiniciar (Restart)
+            Geometry btnRestart = createHUDButton("BtnRestart", "Textures/button_restart.png", ColorRGBA.Magenta, 70f, 70f);
+            btnRestart.setLocalTranslation(cx - 35f, cy - 35f, 1f);
+            pauseMenuSubNode.attachChild(btnRestart);
+
+            // 3. Volver al selector (Back)
+            Geometry btnBack = createHUDButton("BtnBack", "Textures/button_back.png", ColorRGBA.Gray, 70f, 70f);
+            btnBack.setLocalTranslation(cx + 40f, cy - 35f, 1f);
+            pauseMenuSubNode.attachChild(btnBack);
+
+            hudNode.attachChild(pauseMenuSubNode);
+            hudNode.detachChild(pauseBtn); // Oculta el botón de esquina
+        } else {
+            hudNode.detachChild(pauseMenuSubNode);
+            hudNode.attachChild(pauseBtn); // Regresa el botón de esquina
+        }
     }
 
-    private Geometry createButton(String name, String texPath, ColorRGBA fallback, float w, float h) {
-        Quad quad = new Quad(w, h);
-        Geometry geom = new Geometry(name, quad);
+    private Geometry createHUDButton(String name, String texPath, ColorRGBA fallback, float w, float h) {
+        Geometry geom = new Geometry(name, new Quad(w, h));
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         try {
-            Texture tex = assetManager.loadTexture(texPath);
-            mat.setTexture("ColorMap", tex);
+            mat.setTexture("ColorMap", assetManager.loadTexture(texPath));
         } catch (Exception e) {
-            mat.setColor("Color", fallback); // Fallback: Color sólido si no hay sprite
+            mat.setColor("Color", fallback);
         }
         geom.setMaterial(mat);
         return geom;
@@ -126,17 +154,20 @@ public class HUDState extends AbstractAppState implements ActionListener {
             Vector3f click3d = new Vector3f(click2d.x, click2d.y, 10f);
             Ray ray = new Ray(click3d, new Vector3f(0, 0, -1f));
             CollisionResults results = new CollisionResults();
-            hudElements.collideWith(ray, results);
+            hudNode.collideWith(ray, results);
 
             if (results.size() > 0) {
                 Geometry target = results.getClosestCollision().getGeometry();
-                
-                if (target.getName().equals("BtnPause") && !isPaused) {
+                String targetName = target.getName();
+
+                if ("BtnPause".equals(targetName) && !isPaused) {
                     togglePause(true);
-                } else if (target.getName().equals("BtnResume") && isPaused) {
+                } else if ("BtnResume".equals(targetName) && isPaused) {
                     togglePause(false);
-                } else if (target.getName().equals("BtnRestart")) {
-                    restartCurrentLevel();
+                } else if ("BtnRestart".equals(targetName)) {
+                    executeRestart();
+                } else if ("BtnBack".equals(targetName)) {
+                    executeBackToSelector();
                 }
             }
         }
@@ -148,35 +179,40 @@ public class HUDState extends AbstractAppState implements ActionListener {
         BulletAppState physics = app.getStateManager().getState(BulletAppState.class);
 
         if (pause) {
-            if (gs != null) gs.setEnabled(false); // Detiene la lógica de GameState
-            if (physics != null) physics.setSpeed(0f); // Congela físicas
-            showCenterMessage("PAUSADO", ColorRGBA.White, 999f);
-            hudElements.attachChild(resumeBtn);
-            hudElements.detachChild(pauseBtn);
+            if (gs != null) gs.setEnabled(false);
+            if (physics != null) physics.setSpeed(0f);
+            showPauseMenuElements(true);
         } else {
             if (gs != null) gs.setEnabled(true);
             if (physics != null) physics.setSpeed(1f);
             centerText.setText("");
-            hudElements.detachChild(resumeBtn);
-            hudElements.attachChild(pauseBtn);
+            showPauseMenuElements(false);
         }
     }
 
-    private void restartCurrentLevel() {
-        if (isPaused) togglePause(false); // Descongelar antes de reiniciar
-        
+    private void executeRestart() {
+        togglePause(false); // Descongelar
         AppStateManager sm = app.getStateManager();
         GameState currentGs = sm.getState(GameState.class);
         if (currentGs != null) {
-            int currentLevel = currentGs.getLevelIndex();
+            int level = currentGs.getLevelIndex();
             BulletAppState physics = sm.getState(BulletAppState.class);
-            
             sm.detach(currentGs);
-            sm.detach(this); // Limpiar este HUD
-            
+            sm.detach(this);
             sm.attach(new HUDState());
-            sm.attach(new GameState(physics, currentLevel));
+            sm.attach(new GameState(physics, level));
         }
+    }
+
+    private void executeBackToSelector() {
+        togglePause(false); // Asegurar que todo se descongele antes del salto
+        AppStateManager sm = app.getStateManager();
+        GameState currentGs = sm.getState(GameState.class);
+        if (currentGs != null) sm.detach(currentGs);
+        
+        BulletAppState physics = sm.getState(BulletAppState.class);
+        sm.detach(this);
+        sm.attach(new LevelSelectState(physics)); // Regresa al selector lógico
     }
 
     @Override
@@ -184,9 +220,7 @@ public class HUDState extends AbstractAppState implements ActionListener {
         if (!isEnabled()) return;
         if (centerTextTimer > 0f && !isPaused) {
             centerTextTimer -= tpf;
-            if (centerTextTimer <= 0f) {
-                centerText.setText("");
-            }
+            if (centerTextTimer <= 0f) centerText.setText("");
         }
     }
 
@@ -211,7 +245,7 @@ public class HUDState extends AbstractAppState implements ActionListener {
     @Override
     public void cleanup() {
         super.cleanup();
-        guiNode.detachChild(hudElements);
+        guiNode.detachChild(hudNode);
         try { inputManager.deleteMapping("HUDClick"); } catch (Exception ignored) {}
         inputManager.removeListener(this);
     }
