@@ -46,7 +46,7 @@ public class Main extends SimpleApplication {
     public void simpleInitApp() {
         // --- Física ---
         bulletAppState = new BulletAppState();
-        bulletAppState.setDebugEnabled(true);
+        bulletAppState.setDebugEnabled(false);
         stateManager.attach(bulletAppState);
 
         // --- Cámara Ortográfica (igual que el Main original) ---
